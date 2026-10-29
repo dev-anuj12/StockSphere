@@ -14,7 +14,8 @@
       "config": {
         "includeFiles": [
           "server/src/**",
-          "database/migrations/**"
+          "database/migrations/**",
+          "server/package.json"
         ]
       }
     }
@@ -29,8 +30,11 @@
       "dest": "/api/index.js"
     },
     {
+      "handle": "filesystem"
+    },
+    {
       "src": "/(.*)",
-      "dest": "/client/$1"
+      "dest": "/index.html"
     }
   ]
 }
