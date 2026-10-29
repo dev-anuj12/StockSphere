@@ -1,0 +1,59 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: stocksphere-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: stocksphere
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./database/migrations/001_initial_schema.sql:/docker-entrypoint-initdb.d/01_schema.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d stocksphere"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: stocksphere-server
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    environment:
+      NODE_ENV: development
+      PORT: 5000
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/stocksphere
+      JWT_SECRET: stocksphere-jwt-access-secret-minimum-32-characters-key!
+      JWT_REFRESH_SECRET: stocksphere-jwt-refresh-secret-minimum-32-characters-key!
+      CORS_ORIGIN: http://localhost:5173
+      ADMIN_INITIAL_PASSWORD: Admin@StockSphere2026!
+      MANAGER_INITIAL_PASSWORD: Manager@StockSphere2026!
+      STAFF_INITIAL_PASSWORD: Staff@StockSphere2026!
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    container_name: stocksphere-client
+    restart: unless-stopped
+    ports:
+      - "5173:5173"
+    environment:
+      - VITE_API_URL=http://localhost:5000/api
+    depends_on:
+      - server
+
+volumes:
+  pgdata:

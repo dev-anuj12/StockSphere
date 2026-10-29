@@ -1,0 +1,17 @@
+{
+  "name": "stocksphere",
+  "version": "1.0.0",
+  "description": "StockSphere - Smart Inventory & Warehouse Management System",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "npm --prefix client install && npm --prefix client run build",
+    "dev:server": "npm --prefix server run dev",
+    "dev:client": "npm --prefix client run dev",
+    "seed": "npm --prefix server run seed",
+    "test": "npm --prefix server test"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

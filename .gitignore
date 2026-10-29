@@ -1,0 +1,39 @@
+# Dependencies
+node_modules/
+client/node_modules/
+server/node_modules/
+
+# Build Output
+client/dist/
+client/.vite/
+
+# Environment variables (never commit real secrets)
+.env
+.env.local
+.env.*.local
+server/.env
+client/.env.local
+
+# PGlite embedded database (local dev only)
+.data/
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Test coverage
+coverage/
+
+# Vercel
+.vercel/
