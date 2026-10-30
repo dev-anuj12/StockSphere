@@ -2,6 +2,9 @@ import { execSync } from 'child_process';
 import fs from 'fs';
 import path from 'path';
 
+console.log('[BUILD] Installing client dependencies...');
+execSync('npm --prefix client install', { stdio: 'inherit' });
+
 console.log('[BUILD] Building client with Vite...');
 execSync('npm --prefix client run build', { stdio: 'inherit' });
 
