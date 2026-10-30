@@ -3,7 +3,10 @@ import fs from 'fs';
 import path from 'path';
 
 console.log('[BUILD] Installing client dependencies...');
-execSync('npm --prefix client install', { stdio: 'inherit' });
+execSync('npm --prefix client install --include=dev', {
+  stdio: 'inherit',
+  env: { ...process.env, NODE_ENV: 'development' },
+});
 
 console.log('[BUILD] Building client with Vite...');
 execSync('npm --prefix client run build', { stdio: 'inherit' });
