@@ -8,6 +8,14 @@ const api = axios.create({
   },
 });
 
+api.interceptors.request.use(config => {
+  const token = typeof window !== 'undefined' ? localStorage.getItem('stocksphere_token') : null;
+  if (token && !config.headers.Authorization) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
 let isRefreshing = false;
 let failedQueue = [];
 

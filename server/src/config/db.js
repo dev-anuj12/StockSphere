@@ -21,11 +21,13 @@ export async function getDb() {
 
   if (dbUrl && dbUrl.trim() !== '') {
     try {
+      const isCloudDb = dbUrl.includes('neon.tech') || dbUrl.includes('sslmode=require') || dbUrl.includes('amazonaws.com') || dbUrl.includes('render.com') || dbUrl.includes('supabase.co');
       const pgPool = new pg.Pool({
         connectionString: dbUrl,
-        max: 20,
+        ssl: isCloudDb ? { rejectUnauthorized: false } : undefined,
+        max: process.env.VERCEL ? 3 : 15,
         idleTimeoutMillis: 30000,
-        connectionTimeoutMillis: 5000,
+        connectionTimeoutMillis: 10000,
       });
 
       // Test connection
@@ -38,7 +40,11 @@ export async function getDb() {
       await ensureSchema();
       return { type: 'pg', client: pool };
     } catch (err) {
-      console.warn('[DB] PostgreSQL connection failed. Falling back to embedded PGlite engine:', err.message);
+      console.error('[DB] PostgreSQL connection failed:', err.message);
+      if (process.env.NODE_ENV === 'production' || process.env.VERCEL) {
+        throw new Error(`Database connection failed: ${err.message}`);
+      }
+      console.warn('[DB] Falling back to embedded PGlite engine for local development.');
     }
   }
 

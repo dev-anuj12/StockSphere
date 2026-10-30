@@ -30,10 +30,14 @@ export function Login() {
     } catch (err) {
       let msg = err.response?.data?.message;
       if (!msg) {
-        if (err.message?.includes('Network Error') || !err.response) {
-          msg = 'Unable to connect to StockSphere API server. Please verify the backend is running on port 5000.';
+        if (err.response?.status === 404) {
+          msg = 'API endpoint not found (404). Backend is not accessible on this domain.';
+        } else if (err.response?.status === 500) {
+          msg = err.response?.data?.details || 'Database or server error (500). Please check backend logs.';
+        } else if (err.message?.includes('Network Error') || !err.response) {
+          msg = 'Unable to connect to StockSphere API server.';
         } else {
-          msg = 'Login failed. Please verify your credentials.';
+          msg = err.message || 'Login failed. Please verify your credentials.';
         }
       }
       setError(msg);

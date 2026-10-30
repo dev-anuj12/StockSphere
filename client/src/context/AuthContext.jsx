@@ -24,6 +24,9 @@ export function AuthProvider({ children }) {
   const login = async (username, password) => {
     const res = await api.post('/auth/login', { username, password });
     setUser(res.data.user);
+    if (res.data.token) {
+      localStorage.setItem('stocksphere_token', res.data.token);
+    }
     return res.data.user;
   };
 
@@ -31,6 +34,7 @@ export function AuthProvider({ children }) {
     try {
       await api.post('/auth/logout');
     } finally {
+      localStorage.removeItem('stocksphere_token');
       setUser(null);
     }
   };
